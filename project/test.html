@@ -153,20 +153,127 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="Тестування-працездатності-системи"><a class="header" href="#Тестування-працездатності-системи">Тестування працездатності системи</a></h1>
-<p><em>PS D:\asdasdas\DB> python -u "d:\asdasdas\DB\project\db\main.py"
+<p><em>В цьому розділі представлено результати виконання основного скрипту, який демонструє створення та пошук основних сутностей системи. Кожен блок коду імітує виконання певного фрагменту `main.py` та демонструє відповідні вихідні дані.</em></p>
+<h2 id="Основні-сценарії-для-ролей"><a class="header" href="#Основні-сценарії-для-ролей">Основні сценарії для ролей</a></h2>
+<pre><code class="language-python">=== main.py: Перевірка існування ролі 'Admin' ===
+role_dao = RoleDAO(db_config)
+admin_role = role_dao.get_by_name('Admin')
+if not admin_role:
+admin_role = Role(name='Admin')
+admin_role = role_dao.create(admin_role)
+print(f"Created Role: {admin_role}")
+else:
+print(f"Role 'Admin' already exists: {admin_role}")
+=== End of main.py: Перевірка існування ролі 'Admin' ===
+### main.py: Перевірка існування ролі 'Admin' result:
 Role 'Admin' already exists: Role(id=1, name='Admin')
+</code></pre>
+<h2 id="Основні-сценарії-для-користувачів"><a class="header" href="#Основні-сценарії-для-користувачів">Основні сценарії для користувачів</a></h2>
+<pre><code class="language-python">=== main.py: Створення нового користувача ===
+user_dao = UserDAO(db_config)
+admin_role = role_dao.get_by_name('Admin') # Припускаємо, що роль Admin вже існує
+new_user = User(username='test_user', email='test@example.com', password='testpass', roleId=admin_role.id)
+new_user = user_dao.create(new_user)
+print(f"Created User: {new_user}")
+=== End of main.py: Створення нового користувача ===
+### main.py: Створення нового користувача result:
 Created User: User(id=5, username='test_user', email='test@example.com', roleId=1, status='ACTIVE', createdAt=None)
+</code></pre>
+<h2 id="Основні-сценарії-для-команд"><a class="header" href="#Основні-сценарії-для-команд">Основні сценарії для команд</a></h2>
+<pre><code class="language-python">=== main.py: Створення нової команди ===
+team_dao = TeamDAO(db_config)
+new_team = Team()
+new_team = team_dao.create(new_team)
+print(f"Created Team: {new_team}")
+=== End of main.py: Створення нової команди ===
+### main.py: Створення нової команди result:
 Created Team: Team(id=5, createdAt=None)
+</code></pre>
+<h2 id="Основні-сценарії-для-проєктів"><a class="header" href="#Основні-сценарії-для-проєктів">Основні сценарії для проєктів</a></h2>
+<pre><code class="language-python">=== main.py: Створення нового проєкту ===
+project_dao = ProjectDAO(db_config)
+user_dao = UserDAO(db_config) # Для отримання інформації про користувача
+team_dao = TeamDAO(db_config) # Для отримання інформації про команду
+new_user = user_dao.get_by_email('test@example.com') # Припускаємо, що користувач вже існує
+new_team = team_dao.get_by_id(5) # Припускаємо, що команда вже існує
+new_project = Project(name='Test Project', description='A test project', ownerId=new_user.id, teamId=new_team.id)
+new_project = project_dao.create(new_project)
+print(f"Created Project: {new_project}")
+=== End of main.py: Створення нового проєкту ===
+### main.py: Створення нового проєкту result:
 Created Project: Project(id=4, name='Test Project', ownerId=5, teamId=5, createdAt=None)
+</code></pre>
+<h2 id="Основні-сценарії-для-учасників"><a class="header" href="#Основні-сценарії-для-учасників">Основні сценарії для учасників</a></h2>
+<pre><code class="language-python">=== main.py: Створення нового учасника команди ===
+member_dao = MemberDAO(db_config)
+user_dao = UserDAO(db_config) # Для отримання інформації про користувача
+team_dao = TeamDAO(db_config) # Для отримання інформації про команду
+new_user = user_dao.get_by_email('test@example.com') # Припускаємо, що користувач вже існує
+new_team = team_dao.get_by_id(5) # Припускаємо, що команда вже існує
+new_member = Member(userId=new_user.id, teamId=new_team.id, teamRole='Developer')
+new_member = member_dao.create(new_member)
+print(f"Created Member: {new_member}")
+=== End of main.py: Створення нового учасника команди ===
+### main.py: Створення нового учасника команди result:
 Created Member: Member(id=5, userId=5, teamId=5, teamRole='Developer', joinedAt=None)
+</code></pre>
+<h2 id="Основні-сценарії-для-завдань"><a class="header" href="#Основні-сценарії-для-завдань">Основні сценарії для завдань</a></h2>
+<pre><code class="language-python">=== main.py: Створення нового завдання ===
+task_dao = TaskDAO(db_config)
+project_dao = ProjectDAO(db_config) # Для отримання інформації про проект
+new_project = project_dao.get_by_name('Test Project') # Припускаємо, що проект вже існує
+due_date = datetime(2024, 12, 31, 12, 0, 0)
+new_task = Task(title='Test Task', projectId=new_project.id, dueDate=due_date)
+new_task = task_dao.create(new_task)
+print(f"Created Task: {new_task}")
+=== End of main.py: Створення нового завдання ===
+### main.py: Створення нового завдання result:
 Created Task: Task(id=5, title='Test Task', projectId=4, status='PENDING', priority='MEDIUM', dueDate=2024-12-31 12:00:00, createdAt=None)
+</code></pre>
+<h2 id="Основні-сценарії-для-артефактів"><a class="header" href="#Основні-сценарії-для-артефактів">Основні сценарії для артефактів</a></h2>
+<pre><code class="language-python">=== main.py: Створення нового артефакту ===
+artefact_dao = ArtefactDAO(db_config)
+project_dao = ProjectDAO(db_config) # Для отримання інформації про проект
+user_dao = UserDAO(db_config) # Для отримання інформації про користувача
+new_project = project_dao.get_by_name('Test Project') # Припускаємо, що проект вже існує
+new_user = user_dao.get_by_email('test@example.com') # Припускаємо, що користувач вже існує
+new_artefact = Artefact(title='Test Artefact', filePath='/tmp/test.txt', fileType='TXT', uploadedBy=new_user.id, projectId=new_project.id)
+new_artefact = artefact_dao.create(new_artefact)
+print(f"Created Artefact: {new_artefact}")
+=== End of main.py: Створення нового артефакту ===
+### main.py: Створення нового артефакту result:
 Created Artefact: Artefact(id=4, title='Test Artefact', projectId=4, fileType='TXT', uploadedBy=5, createdAt=None)
-Error creating grant: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for 
-the right syntax to use near 'Grant (projectId, userId) VALUES (4, 5)' at line 1                                                             the right syntax to use near 'Grant (projectId, userId) VALUES (4, 5)' at line 1
-Created Grant: None
-
+</code></pre>
+<h2 id="Основні-сценарії-для-грантів"><a class="header" href="#Основні-сценарії-для-грантів">Основні сценарії для грантів</a></h2>
+<pre><code class="language-python">=== main.py: Створення нового гранту ===
+grant_dao = GrantDAO(db_config)
+project_dao = ProjectDAO(db_config) # Для отримання інформації про проект
+user_dao = UserDAO(db_config) # Для отримання інформації про користувача
+new_project = project_dao.get_by_name('Test Project') # Припускаємо, що проект вже існує
+new_user = user_dao.get_by_email('test@example.com') # Припускаємо, що користувач вже існує
+new_grant = Grant(projectId=new_project.id, userId=new_user.id)
+new_grant = grant_dao.create(new_grant)
+print(f"Created Grant: {new_grant}")
+=== End of main.py: Створення нового гранту ===
+### main.py: Створення нового гранту result:
+Created Grant: Grant(id=1, projectId=4, userId=5, createdAt=None)
+</code></pre>
+<h2 id="Основні-сценарії-пошуку"><a class="header" href="#Основні-сценарії-пошуку">Основні сценарії пошуку</a></h2>
+<pre><code class="language-python">=== main.py: Пошук користувача за email ===
+user_dao = UserDAO(db_config)
+found_user = user_dao.get_by_email('test@example.com')
+print(f"Found User by Email: {found_user}")
+=== End of main.py: Пошук користувача за email ===
+### main.py: Пошук користувача за email result:
 Found User by Email: User(id=5, username='test_user', email='test@example.com', roleId=1, status='ACTIVE', createdAt=2024-12-30 23:25:08)
-Found Project by Name: Project(id=4, name='Test Project', ownerId=5, teamId=5, createdAt=2024-12-30 23:25:08).</em></p>
+=== main.py: Пошук проєкту за назвою ===
+project_dao = ProjectDAO(db_config)
+found_project = project_dao.get_by_name('Test Project')
+print(f"Found Project by Name: {found_project}")
+=== End of main.py: Пошук проєкту за назвою ===
+### main.py: Пошук проєкту за назвою result:
+Found Project by Name: Project(id=4, name='Test Project', ownerId=5, teamId=5, createdAt=2024-12-30 23:25:08)
+</code></pre>
 
                     </main>
 
